@@ -1,0 +1,32 @@
+name: StockMap smoke test
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  smoke-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Selenium
+        run: pip install selenium
+
+      - name: Start local web server
+        run: |
+          python -m http.server 8000 >/tmp/stockmap-http.log 2>&1 &
+          sleep 2
+
+      - name: Run browser smoke test
+        run: python .github/smoke_test.py
