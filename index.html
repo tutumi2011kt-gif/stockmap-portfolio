@@ -96,10 +96,12 @@ function fromTdQuote(o){
 function freshFundamentals(x){return x&&x.fundamentalsUpdatedMs&&Date.now()-x.fundamentalsUpdatedMs<86400000}
 async function fetchStockData(ticker,existing,forceFundamentals){
  var data={},warnings=[],didFundamentals=false,didPrice=false;
- if(tdKey()){try{Object.assign(data,fromTdQuote(await tdQuote(ticker)));didPrice=true}catch(e){warnings.push('株価: '+e.message)}}else warnings.push('株価: Twelve Dataキー未設定');
  if(apiKey()&&(forceFundamentals||!freshFundamentals(existing))){
   try{var fd=fromOverview(await av('OVERVIEW',ticker));fd.fundamentalsUpdated=nowLabel();fd.fundamentalsUpdatedMs=Date.now();Object.assign(data,fd);didFundamentals=true}catch(e){warnings.push('企業指標: '+e.message)}
  }else if(!apiKey())warnings.push('企業指標: Alpha Vantageキー未設定');
+ if(tdKey()){
+  try{var qd=fromTdQuote(await tdQuote(ticker));Object.keys(qd).forEach(function(k){if(qd[k]!==undefined&&qd[k]!==null&&qd[k]!=='')data[k]=qd[k]});didPrice=true}catch(e){warnings.push('株価: '+e.message)}
+ }else warnings.push('株価: Twelve Dataキー未設定');
  if(!Object.keys(data).length)throw new Error(warnings.join(' / ')||'情報を取得できませんでした');
  data.lastUpdated=nowLabel();return {data:data,warnings:warnings,didFundamentals:didFundamentals,didPrice:didPrice};
 }
