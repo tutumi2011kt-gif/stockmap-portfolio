@@ -202,8 +202,8 @@ function draw(c,a,xmode,smode,ymode,sel,select,sub,ex){
  var ordered=pts.slice().sort(function(a,b){return (a.i===sel?1:0)-(b.i===sel?1:0)});
  c._p=[];
  ordered.forEach(function(z){
-  var selected=z.i===sel,fade=sel!=null&&!selected;
-  ctx.save();ctx.globalAlpha=fade?.38:.86;
+  var selected=z.i===sel;
+  ctx.save();ctx.globalAlpha=.84;
   ctx.beginPath();ctx.arc(z.cx,z.cy,z.r,0,Math.PI*2);ctx.fillStyle=color(z.sc);ctx.fill();
   ctx.globalAlpha=1;ctx.lineWidth=selected?5:2;ctx.strokeStyle=selected?'#111827':'#fff';ctx.stroke();
   ctx.restore();
