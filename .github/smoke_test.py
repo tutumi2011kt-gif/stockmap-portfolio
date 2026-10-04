@@ -21,7 +21,7 @@ mock_js = r"""
   window.__tdCalls = 0;
   const bySymbol = {
     TSLA: {name:'Tesla, Inc.', cap:'1500000000000', growth:'0.32', eps:'3.50', ps:'13.2', per:'125', peg:'2.4', price:'500.00', volume:'25000000'},
-    IONQ: {name:'IonQ, Inc.', cap:'16000000000', growth:'0.85', eps:'-0.80', ps:'45.0', per:'None', peg:'None', price:'70.00', volume:'8000000'}
+    IONQ: {name:'IonQ, Inc.', cap:'16000000000', growth:'2.85', eps:'-0.80', ps:'45.0', per:'None', peg:'None', price:'70.00', volume:'8000000'}
   };
 
   window.fetch = async (url, opts={}) => {
@@ -122,7 +122,25 @@ try:
     assert float(tsla["ps"]) == 13.2
     assert tsla["sector"] == "TECHNOLOGY"
     assert float(ionq["price"]) == 70.0
-    assert float(ionq["growth"]) == 85.0
+    assert float(ionq["growth"]) == 285.0
+
+    # Chart UX: terminology + standard/full Y-axis modes.
+    assert "現在評価額" in driver.find_element(By.ID, "pSize").text
+    assert driver.find_element(By.ID, "pY").get_attribute("value") == "standard"
+
+    driver.find_element(By.CSS_SELECTOR, '[data-page="watch"]').click()
+    wait.until(EC.visibility_of_element_located((By.ID, "wCanvas")))
+    assert driver.find_element(By.ID, "wY").get_attribute("value") == "standard"
+    clipped = driver.execute_script("return document.getElementById('wCanvas')._p.map(x => ({actualY:x.actualY, clipped:x.clipped}))")
+    assert any(abs(float(x["actualY"]) - 285.0) < 0.1 and x["clipped"] for x in clipped)
+
+    from selenium.webdriver.support.ui import Select
+    Select(driver.find_element(By.ID, "wY")).select_by_value("full")
+    time.sleep(0.2)
+    full_pts = driver.execute_script("return document.getElementById('wCanvas')._p.map(x => ({actualY:x.actualY, clipped:x.clipped}))")
+    assert any(abs(float(x["actualY"]) - 285.0) < 0.1 and not x["clipped"] for x in full_pts)
+
+    driver.find_element(By.CSS_SELECTOR, '[data-page="portfolio"]').click()
 
     # Private user-entered data stays untouched.
     assert float(tsla["shares"]) == 10.0
