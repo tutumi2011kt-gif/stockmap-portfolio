@@ -42,7 +42,7 @@ dialog{border:0;border-radius:16px;width:min(92vw,720px);box-shadow:0 24px 70px 
 <script>
 var KEY='stockmap_v1',state=load(),editing=null,CATALOG={TSLA:'Tesla, Inc.',PLTR:'Palantir Technologies',IONQ:'IonQ, Inc.',OKLO:'Oklo Inc.',NVDA:'NVIDIA Corporation',AAPL:'Apple Inc.',MSFT:'Microsoft Corporation',AMZN:'Amazon.com, Inc.',META:'Meta Platforms, Inc.',AMD:'Advanced Micro Devices'};
 function load(){try{return Object.assign({portfolio:[],watch:[],privacy:false,pSel:null,wSel:null},JSON.parse(localStorage.getItem(KEY)||'{}'))}catch(e){return {portfolio:[],watch:[],privacy:false,pSel:null,wSel:null}}}function save(){localStorage.setItem(KEY,JSON.stringify(state))}function n(v){v=parseFloat(v);return isFinite(v)?v:null}function money(v){return v==null?'—':'$'+v.toLocaleString(undefined,{maximumFractionDigits:2})}function pc(v){return v==null?'—':(v>=0?'+':'')+v.toFixed(1)+'%'}function mask(v){return state.privacy?'••••••':v}
-function mscore(v,s){return v==null||v<=0?null:Math.max(0,Math.min(100,100*v/(v+s)))}function score(x){var a=[],v=mscore(n(x.ps),10);if(v!=null)a.push([v,.4]);v=mscore(n(x.per),25);if(v!=null)a.push([v,.35]);v=mscore(n(x.peg),1.5);if(v!=null)a.push([v,.25]);if(!a.length)return null;var w=a.reduce(function(t,z){return t+z[1]},0);return a.reduce(function(t,z){return t+z[0]*z[1]/w},0)}function badge(s){if(s==null)return '<span class="badge x">N/A</span>';var c=s<=25?'g':s<=50?'n':s<=75?'w':'r',t=s<=25?'割安':s<=50?'中立':s<=75?'やや割高':'割高';return '<span class="badge '+c+'">'+s.toFixed(0)+' '+t+'</span>'}function color(s){return s==null?'#94a3b8':s<=25?'#22c55e':s<=50?'#2563eb':s<=75?'#f59e0b':'#dc2626'}function hold(x){return n(x.price)!=null&&n(x.shares)!=null?n(x.price)*n(x.shares):null}function profit(x){return n(x.price)!=null&&n(x.shares)!=null&&n(x.avg)!=null?(n(x.price)-n(x.avg))*n(x.shares):null}function total(){return state.portfolio.reduce(function(t,x){return t+(hold(x)||0)},0)}
+function mscore(v,s){return v==null||v<=0?null:Math.max(0,Math.min(100,100*v/(v+s)))}function score(x){var a=[],v=mscore(n(x.ps),10);if(v!=null)a.push([v,.4]);v=mscore(n(x.per),25);if(v!=null)a.push([v,.35]);v=mscore(n(x.peg),1.5);if(v!=null)a.push([v,.25]);if(!a.length)return null;var w=a.reduce(function(t,z){return t+z[1]},0);return a.reduce(function(t,z){return t+z[0]*z[1]/w},0)}function badge(s){if(s==null)return '<span class="badge x">N/A</span>';var c=s<=25?'g':s<=50?'n':s<=75?'w':'r',t=s<=25?'割安':s<=50?'中立':s<=75?'やや割高':'割高';return '<span class="badge '+c+'">'+s.toFixed(0)+' '+t+'</span>'}function color(s){return s==null?'#94a3b8':s<=25?'#16b364':s<=50?'#1f6feb':s<=75?'#ff9800':'#ef2b2d'}function hold(x){return n(x.price)!=null&&n(x.shares)!=null?n(x.price)*n(x.shares):null}function profit(x){return n(x.price)!=null&&n(x.shares)!=null&&n(x.avg)!=null?(n(x.price)-n(x.avg))*n(x.shares):null}function total(){return state.portfolio.reduce(function(t,x){return t+(hold(x)||0)},0)}
 
 var API_KEY_STORAGE='stockmap_alpha_vantage_key';
 function apiKey(){return localStorage.getItem(API_KEY_STORAGE)||''}
@@ -203,7 +203,7 @@ function draw(c,a,xmode,smode,ymode,sel,select,sub,ex){
  c._p=[];
  ordered.forEach(function(z){
   var selected=z.i===sel;
-  ctx.save();ctx.globalAlpha=.84;
+  ctx.save();ctx.globalAlpha=.98;
   ctx.beginPath();ctx.arc(z.cx,z.cy,z.r,0,Math.PI*2);ctx.fillStyle=color(z.sc);ctx.fill();
   ctx.globalAlpha=1;ctx.lineWidth=selected?5:2;ctx.strokeStyle=selected?'#111827':'#fff';ctx.stroke();
   ctx.restore();
